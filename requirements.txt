@@ -1,0 +1,36 @@
+# ===========================
+# FastAPI
+# ===========================
+
+fastapi
+uvicorn
+
+# ===========================
+# Machine Learning
+# ===========================
+
+numpy
+pandas
+scikit-learn
+xgboost
+joblib
+
+# ===========================
+# NLP / Embeddings
+# ===========================
+
+sentence-transformers
+transformers
+torch
+
+# ===========================
+# Validation
+# ===========================
+
+pydantic
+
+# ===========================
+# File Upload Support
+# ===========================
+
+python-multipart
