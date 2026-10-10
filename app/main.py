@@ -9,7 +9,23 @@ from app.schemas import (
 from app.predict import (
     predict_resume_job_match
 )
+from dataclasses import asdict
 
+from pydantic import BaseModel, Field
+
+from app.github_evidence.evaluator import evaluate_github_evidence
+
+class GitHubRepositoryRequest(BaseModel):
+    owner: str = Field(min_length=1, max_length=100)
+    name: str = Field(min_length=1, max_length=100)
+
+
+class GitHubEvidenceRequest(BaseModel):
+    repositories: list[GitHubRepositoryRequest] = Field(
+        default_factory=list,
+        max_length=3,
+    )
+    required_skills: list[str] = Field(min_length=1)
 app = FastAPI(
     title="AI Resume Matching Service",
     description="Resume Screening & Course Recommendation API",
@@ -72,3 +88,20 @@ def match_resume(
     )
 
     return result
+
+# =====================================================
+# GitHub Evidence Evaluation Endpoint
+# =====================================================
+
+@app.post("/github-evidence")
+def evaluate_github_repositories(request: GitHubEvidenceRequest):
+    result = evaluate_github_evidence(
+        repositories=[
+            repository.model_dump()
+            for repository in request.repositories
+        ],
+        required_skills=request.required_skills,
+        max_repositories=3,
+    )
+
+    return asdict(result)
